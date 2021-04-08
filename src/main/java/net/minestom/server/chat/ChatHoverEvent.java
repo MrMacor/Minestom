@@ -1,6 +1,5 @@
 package net.minestom.server.chat;
 
-import com.google.gson.JsonElement;
 import com.google.gson.JsonObject;
 import com.google.gson.JsonPrimitive;
 import net.kyori.adventure.text.Component;
@@ -17,6 +16,7 @@ import java.util.UUID;
 
 /**
  * Represents a hover event for a specific portion of the message.
+ * @deprecated Use {@link HoverEvent}
  */
 @Deprecated
 public class ChatHoverEvent {

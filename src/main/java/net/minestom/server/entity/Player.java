@@ -12,6 +12,7 @@ import net.kyori.adventure.text.Component;
 import net.kyori.adventure.text.event.HoverEvent;
 import net.kyori.adventure.text.event.HoverEvent.ShowEntity;
 import net.kyori.adventure.text.event.HoverEventSource;
+import net.kyori.adventure.text.serializer.gson.GsonComponentSerializer;
 import net.kyori.adventure.title.Title;
 import net.minestom.server.MinecraftServer;
 import net.minestom.server.advancements.AdvancementTab;
@@ -58,8 +59,8 @@ import net.minestom.server.recipe.RecipeManager;
 import net.minestom.server.resourcepack.ResourcePack;
 import net.minestom.server.scoreboard.BelowNameTag;
 import net.minestom.server.scoreboard.Team;
-import net.minestom.server.sound.SoundEvent;
 import net.minestom.server.sound.SoundCategory;
+import net.minestom.server.sound.SoundEvent;
 import net.minestom.server.stat.PlayerStatistic;
 import net.minestom.server.utils.*;
 import net.minestom.server.utils.callback.OptionalCallback;
@@ -803,7 +804,7 @@ public class Player extends LivingEntity implements CommandSender, Localizable, 
      */
     @Deprecated
     public void sendJsonMessage(@NotNull String json) {
-        this.sendMessage(json);
+        this.sendMessage(GsonComponentSerializer.gson().deserialize(json));
     }
 
     @Override
@@ -2666,6 +2667,16 @@ public class Player extends LivingEntity implements CommandSender, Localizable, 
         this.identity = Identity.identity(uuid);
     }
 
+    @Override
+    public boolean isPlayer() {
+        return true;
+    }
+
+    @Override
+    public Player asPlayer() {
+        return this;
+    }
+
     /**
      * Represents the main or off hand of the player.
      */
@@ -2703,8 +2714,6 @@ public class Player extends LivingEntity implements CommandSender, Localizable, 
         private boolean chatColors;
         private byte displayedSkinParts;
         private MainHand mainHand;
-
-        private boolean firstRefresh = true;
 
         /**
          * The player game language.
@@ -2780,8 +2789,6 @@ public class Player extends LivingEntity implements CommandSender, Localizable, 
             this.mainHand = mainHand;
 
             metadata.setIndex((byte) 16, Metadata.Byte(displayedSkinParts));
-
-            this.firstRefresh = false;
 
             // Client changed his view distance in the settings
             if (viewDistanceChanged) {
